@@ -1,0 +1,5 @@
+laws s3api create-bucket --bucket poc-localstack --acl public-read-write
+laws firehose create-delivery-stream \
+    --delivery-stream-name poc-localstack \
+    --delivery-stream-type DirectPut \
+    --extended-s3-destination-configuration "BucketARN=arn:aws:s3:::poc-localstack"
