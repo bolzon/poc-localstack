@@ -71,8 +71,8 @@ data "aws_iam_policy_document" "raw_firehose_policies" {
   statement {
     actions = [
       "s3:AbortMultipartUpload",
-      "s3:ListAllMyBuckets",
       "s3:GetBucketLocation",
+      "s3:ListAllMyBuckets",
       "s3:ListBucket",
       "s3:ListBucketMultipartUploads",
       "s3:PutObject*"
