@@ -2,7 +2,7 @@ version: '3.5'
 
 services:
   localstack:
-    container_name: "${LOCALSTACK_DOCKER_NAME-localstack}"
+    container_name: "${LOCALSTACK_DOCKER_NAME}"
     image: localstack/localstack
     network_mode: bridge
     ports:
