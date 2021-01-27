@@ -41,14 +41,14 @@ resource "aws_s3_bucket" "raw_bucket" {
   acl    = "public-read-write"
 }
 
-resource "aws_cloudwatch_log_group" "raw_firehose_cw_log_group" {
-  name = "${local.service}-raw-firehose-cw-log-group"
-}
+# resource "aws_cloudwatch_log_group" "raw_firehose_cw_log_group" {
+#   name = "${local.service}-raw-firehose-cw-lg"
+# }
 
-resource "aws_cloudwatch_log_stream" "raw_firehose_cw_log_stream" {
-  name           = "${local.service}-raw-firehose-cw-log-stream"
-  log_group_name = aws_cloudwatch_log_group.raw_firehose_cw_log_group.name
-}
+# resource "aws_cloudwatch_log_stream" "raw_firehose_cw_log_stream" {
+#   name           = "${local.service}-raw-firehose-cw-ls"
+#   log_group_name = aws_cloudwatch_log_group.raw_firehose_cw_log_group.name
+# }
 
 data "aws_iam_policy_document" "raw_firehose_assume_role" {
   statement {
@@ -84,18 +84,18 @@ data "aws_iam_policy_document" "raw_firehose_policies" {
     ]
   }
 
-  statement {
-    actions = [
-      "logs:PutLogEvents",
-      "logs:PutLogEventsBatch",
-      "cloudwatch:PutMetricData"
-    ]
+  # statement {
+  #   actions = [
+  #     "logs:PutLogEvents",
+  #     "logs:PutLogEventsBatch",
+  #     "cloudwatch:PutMetricData"
+  #   ]
 
-    resources = [
-      aws_cloudwatch_log_group.raw_firehose_cw_log_group.arn,
-      aws_cloudwatch_log_stream.raw_firehose_cw_log_stream.arn
-    ]
-  }
+  #   resources = [
+  #     aws_cloudwatch_log_group.raw_firehose_cw_log_group.arn,
+  #     aws_cloudwatch_log_stream.raw_firehose_cw_log_stream.arn
+  #   ]
+  # }
 }
 
 resource "aws_iam_policy" "raw_firehose_policies" {
@@ -112,17 +112,18 @@ resource "aws_kinesis_firehose_delivery_stream" "raw_firehose" {
   name        = "${local.service}-raw-firehose"
   destination = "extended_s3"
 
+
   extended_s3_configuration {
     role_arn           = aws_iam_role.raw_firehose_role.arn
     bucket_arn         = aws_s3_bucket.raw_bucket.arn
-    buffer_interval    = 30
+    buffer_interval    = 60
     buffer_size        = 5 # MiB
     compression_format = "GZIP"
 
-    cloudwatch_logging_options {
-      enabled         = true
-      log_group_name  = aws_cloudwatch_log_group.raw_firehose_cw_log_group.name
-      log_stream_name = aws_cloudwatch_log_stream.raw_firehose_cw_log_stream.name
-    }
+    # cloudwatch_logging_options {
+    #   enabled         = true
+    #   log_group_name  = aws_cloudwatch_log_group.raw_firehose_cw_log_group.name
+    #   log_stream_name = aws_cloudwatch_log_stream.raw_firehose_cw_log_stream.name
+    # }
   }
 }
